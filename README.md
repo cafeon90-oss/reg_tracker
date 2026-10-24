@@ -23,6 +23,16 @@
 5. **영향 연결**: 연결표에서 출처 문서와 키워드가 맞는 후보를 고르고, 실제 관련 여부와 이유는 Claude가 판정한다.
 6. **보고**: `reports/YYYY-MM-DD.html`과 같은 이름의 `.json`을 만든다.
 
+## 다른 저장소에서 읽기
+
+요약까지 마친 실행은 [feed/alerts.json](feed/alerts.json)을 갱신한다. 다른 저장소는 아래 주소에서 자기 저장소 이름이 `targets[].repo`에 들어간 알림만 골라 읽는다.
+
+```
+https://raw.githubusercontent.com/cafeon90-oss/reg_tracker/main/feed/alerts.json
+```
+
+이미 반영한 알림 id는 각 저장소의 확인 완료 파일(예: `data/reg_ack.json`)로 걸러 낸다. 형식은 [feed/SCHEMA.md](feed/SCHEMA.md)에 있다. 현재 CBAM 계산기가 이 피드를 읽는다.
+
 ## 평가
 
 탐지가 맞는지는 실제 과거 개정본 쌍으로 확인한다. 정답은 각 개정의 **공식 제·개정문**에 적힌 변경 위치다. 제·개정문에는 없지만 원문을 직접 대조해 확인한 변경은 오탐으로 세지 않는다. 사례와 근거는 [eval/cases.yaml](eval/cases.yaml)에 있다.

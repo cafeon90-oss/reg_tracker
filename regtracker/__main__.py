@@ -1,7 +1,9 @@
 """명령줄 진입점.
 
   python -m regtracker run [--no-llm] [--no-save]
-      추적 대상 전체를 확인하고 reports/YYYY-MM-DD.html 을 만든다.
+      추적 대상 전체를 확인하고 reports/YYYY-MM-DD.html 을 만든다. 요약까지 하면 feed/alerts.json 도 갱신한다.
+  python -m regtracker feed reports/YYYY-MM-DD.json
+      저장된 보고서 결과를 피드에 합친다.
   python -m regtracker compare <문서 id> <이전 고시번호> <새 고시번호> [--no-llm]
       한 고시의 임의의 두 버전을 비교한다. 예: compare kr-epd-guideline 2024-29 2025-127
   python -m regtracker versions <문서 id>
@@ -15,7 +17,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-from . import report
+from . import feed, report
 from .impact import load_targets
 from .llm import Analyzer
 from .pipeline import compare_rule, load_sources, run
@@ -46,12 +48,23 @@ def main(argv=None) -> None:
     v.add_argument("doc_id")
     g = sub.add_parser("render", help="저장된 JSON 보고서로 HTML만 다시 만든다(API 호출 없음)")
     g.add_argument("json_path")
+    fd = sub.add_parser("feed", help="저장된 JSON 보고서의 결과를 feed/alerts.json 에 합친다")
+    fd.add_argument("json_path")
     a = p.parse_args(argv)
 
     if a.cmd == "run":
         entries, analyzer = run(use_llm=not a.no_llm, save_state=not a.no_save)
         out = report.write(entries, analyzer)
         print(f"보고서: {out}")
+        if analyzer and not a.no_save:
+            f = feed.update(entries)
+            print(f"피드: {feed.FEED_PATH} (알림 {len(f['alerts'])}건)")
+    elif a.cmd == "feed":
+        from datetime import datetime
+        from pathlib import Path
+        entries, data = report.load(Path(a.json_path))
+        f = feed.update(entries, detected=datetime.fromisoformat(data["generated"]).date())
+        print(f"피드: {feed.FEED_PATH} (알림 {len(f['alerts'])}건)")
     elif a.cmd == "render":
         from datetime import datetime
         from pathlib import Path
