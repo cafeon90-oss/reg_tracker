@@ -1,0 +1,68 @@
+# 규정 변경이 내 코드·데이터의 어디에 영향을 주는지 잇는 연결표.
+# docs 에 적힌 출처 문서가 바뀌고, 바뀐 내용에 keywords 중 하나라도 들어 있으면 후보가 된다.
+# 후보는 LLM이 실제 관련 여부를 한 번 더 판단한다.
+
+targets:
+  - id: cbam-default-values
+    repo: CBAM_Calculator
+    path: see_steel.py
+    symbol: DEFAULT_VALUES, KR_DEFAULT_PRODUCT
+    what: 원산지별 철강 기본값(SEE)과 한국 제품 기본값
+    docs: [eu-cbam]
+    keywords: [default value, default values, mark-up, 기본값]
+
+  - id: cbam-benchmarks
+    repo: CBAM_Calculator
+    path: see_steel.py
+    symbol: COLUMN_A, COLUMN_B_PRODUCT, steel_markup()
+    what: 벤치마크(무상할당 기준)와 연도별 CBAM 계수
+    docs: [eu-cbam]
+    keywords: [benchmark, free allocation, CBAM factor, 무상할당]
+
+  - id: cbam-grid-ef
+    repo: CBAM_Calculator
+    path: see_steel.py
+    symbol: KR_GRID_EF
+    what: 한국 전력 배출계수(간접배출)
+    docs: [eu-cbam]
+    keywords: [electricity, grid, emission factor, 전력]
+
+  - id: cbam-waste-gas
+    repo: CBAM_Calculator
+    path: see_steel.py
+    symbol: EF_NG, WG_EXPORT_CORR, waste_gas_correction()
+    what: 폐가스 보정과 천연가스 기준 배출계수
+    docs: [eu-cbam]
+    keywords: [waste gas, natural gas, 폐가스]
+
+  - id: cbam-precursors
+    repo: CBAM_Calculator
+    path: see_steel.py
+    symbol: PRECURSORS, precursor_lines()
+    what: 전구물질 목록과 내재배출 합산
+    docs: [eu-cbam]
+    keywords: [precursor, 전구물질]
+
+  - id: epd-steel-rules
+    repo: (예정) 다중 지침 비교 엔진
+    path: "-"
+    symbol: "-"
+    what: 환경성적표지 철강 개별지침의 경계·할당·스크랩 규칙
+    docs: [kr-epd-guideline]
+    keywords: [철강, 강재, 스크랩, 반제품, 할당]
+
+  - id: screener-kr-methodology
+    repo: carbon_screener
+    path: data/methodologies/kr_kcs_biochar.yaml
+    symbol: "-"
+    what: 국내 외부사업 바이오차 방법론 요건 칩
+    docs: [kr-ets-offset]
+    keywords: [외부사업, 방법론, 감축량, 바이오차, 추가성]
+
+  - id: screener-mrv
+    repo: carbon_screener
+    path: data/mrv/
+    symbol: "-"
+    what: 모니터링·검증 요건
+    docs: [kr-ets-mrv, kr-ets-offset]
+    keywords: [모니터링, 검증, 불확도, 측정기기]

@@ -1,0 +1,32 @@
+# 추적 대상 목록. 새 문서를 추가할 때는 이 파일만 고치면 된다.
+
+# 국가법령정보센터 행정규칙(고시·지침). 개정 이력 전체를 사이트에서 직접 받아,
+# 최신본과 직전본을 조문 단위로 비교한다.
+admin_rules:
+  - id: kr-epd-guideline
+    name: 환경성적표지 작성지침
+    annexes: true          # 별표·부속서(PDF)까지 비교
+  - id: kr-ets-mrv
+    name: 온실가스 배출권거래제의 배출량 보고 및 인증에 관한 지침
+    annexes: false
+  - id: kr-ets-offset
+    name: 외부사업 타당성 평가 및 감축량 인증에 관한 지침
+    annexes: false
+
+# 국민참여입법센터 행정예고. 제목에 키워드가 들어간 예고를 새로 찾는다.
+notices:
+  keywords:
+    - 환경성적표지
+    - 배출권거래제
+    - 온실가스
+    - 외부사업
+    - 저탄소제품
+    - 탄소발자국
+  lookback_days: 120      # 첫 실행 때 이 기간 안의 예고만 보고한다
+
+# EU 법령. 기준 법령을 개정하거나 그에 근거한 새 법령을 EU SPARQL로 찾는다.
+eu_acts:
+  - id: eu-cbam
+    name: CBAM 규정 (EU) 2023/956
+    base_celex: 32023R0956
+    lookback_days: 120

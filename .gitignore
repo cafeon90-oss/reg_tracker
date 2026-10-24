@@ -1,0 +1,13 @@
+# 비밀값
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# 내려받은 원문 캐시(언제든 다시 받을 수 있음)
+.cache/

@@ -1,0 +1,37 @@
+# 평가셋: 실제 과거 개정본 쌍과, 공식 제·개정문(개정이유·주요내용)으로 만든 정답.
+#
+# expect_locations : 공식 제·개정문에 적힌 변경 위치. 탐지기가 반드시 찾아야 한다(재현율).
+# allowed_locations: 제·개정문에는 없지만 원문을 직접 대조해 확인한 실제 변경(오탐으로 세지 않음).
+# 위치 단위는 '본문 제N조', '본문 부칙', '별표 N', '부속서 N'.
+# expect_importance, expect_terms 는 LLM 요약 평가(--llm)에서만 쓴다.
+
+cases:
+  - id: epd-2025-165
+    doc_id: kr-epd-guideline
+    old: 2025-127
+    new: 2025-165
+    source: "제·개정문 주요내용: 정부조직 개편에 따른 기관 명칭 변경(제7조)"
+    expect_locations: [본문 제7조]
+    allowed_locations: [부속서 3, 부속서 6]   # 별표 안 '환경부' 표기도 함께 바뀜(원문 대조)
+    expect_importance: low
+    expect_terms: [기후에너지환경부]
+
+  - id: epd-2025-127
+    doc_id: kr-epd-guideline
+    old: 2024-29
+    new: 2025-127
+    source: "제·개정문 주요내용: 가. 사용 시나리오 지침 정비(별표 4), 나. 개별지침 정비(별표 5)"
+    expect_locations: [별표 4, 별표 5, 본문 부칙]
+    allowed_locations: [본문 제7조]           # 재검토기한 기준일 2024→2026(원문 대조)
+    expect_importance: high
+    expect_terms: [사용 시나리오, 개별지침]
+
+  - id: mrv-2025-64
+    doc_id: kr-ets-mrv
+    old: 2025-28
+    new: 2025-64
+    source: "제·개정문: 규제 재검토기한 해제, 제43조 삭제"
+    expect_locations: [본문 제43조, 본문 부칙]
+    allowed_locations: []
+    expect_importance: low
+    expect_terms: [재검토]
