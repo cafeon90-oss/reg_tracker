@@ -1,6 +1,10 @@
 # 규정 변경이 내 코드·데이터의 어디에 영향을 주는지 잇는 연결표.
-# docs 에 적힌 출처 문서가 바뀌고, 바뀐 내용에 keywords 중 하나라도 들어 있으면 후보가 된다.
-# 후보는 LLM이 실제 관련 여부를 한 번 더 판단한다.
+#
+# 후보가 되는 조건 (최종 판단은 LLM이 하되, 후보 밖의 대상은 붙일 수 없다)
+# - 고시 개정·EU 법령: 출처 문서 id가 docs 에 있고, 바뀐 내용에 keywords 중 하나가 들어 있을 때
+# - 행정예고: 출처 문서가 정해져 있지 않으므로 제목이 먼저 이어져야 한다.
+#   제목에 docs 에 있는 고시의 이름이 들어 있거나, notice_titles 중 하나가 들어 있고,
+#   그다음 본문에 keywords 중 하나가 들어 있을 때. notice_titles 가 없으면 이름으로만 이어진다.
 
 targets:
   - id: cbam-default-values
@@ -10,6 +14,7 @@ targets:
     what: 원산지별 철강 기본값(SEE)과 한국 제품 기본값
     docs: [eu-cbam]
     keywords: [default value, default values, mark-up, 기본값]
+    notice_titles: [CBAM, 탄소국경]
 
   - id: cbam-benchmarks
     repo: CBAM_Calculator
@@ -18,6 +23,7 @@ targets:
     what: 벤치마크(무상할당 기준)와 연도별 CBAM 계수
     docs: [eu-cbam]
     keywords: [benchmark, free allocation, CBAM factor, 무상할당]
+    notice_titles: [CBAM, 탄소국경]
 
   - id: cbam-grid-ef
     repo: CBAM_Calculator
@@ -26,6 +32,7 @@ targets:
     what: 한국 전력 배출계수(간접배출)
     docs: [eu-cbam]
     keywords: [electricity, grid, emission factor, 전력]
+    notice_titles: [CBAM, 탄소국경, 전력 배출계수]
 
   - id: cbam-waste-gas
     repo: CBAM_Calculator
@@ -34,6 +41,7 @@ targets:
     what: 폐가스 보정과 천연가스 기준 배출계수
     docs: [eu-cbam]
     keywords: [waste gas, natural gas, 폐가스]
+    notice_titles: [CBAM, 탄소국경]
 
   - id: cbam-precursors
     repo: CBAM_Calculator
@@ -42,6 +50,7 @@ targets:
     what: 전구물질 목록과 내재배출 합산
     docs: [eu-cbam]
     keywords: [precursor, 전구물질]
+    notice_titles: [CBAM, 탄소국경]
 
   - id: epd-steel-rules
     repo: (예정) 다중 지침 비교 엔진
@@ -58,6 +67,7 @@ targets:
     what: 국내 외부사업 바이오차 방법론 요건 칩
     docs: [kr-ets-offset]
     keywords: [외부사업, 방법론, 감축량, 바이오차, 추가성]
+    notice_titles: [외부사업, 상쇄배출권, 바이오차]
 
   - id: screener-mrv
     repo: carbon_screener
@@ -66,3 +76,4 @@ targets:
     what: 모니터링·검증 요건
     docs: [kr-ets-mrv, kr-ets-offset]
     keywords: [모니터링, 검증, 불확도, 측정기기]
+    notice_titles: [외부사업, 상쇄배출권, 바이오차]

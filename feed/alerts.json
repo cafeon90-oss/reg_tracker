@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "generated": "2026-10-25T03:05:48",
+ "generated": "2026-10-25T03:39:41",
  "source": "https://github.com/cafeon90-oss/reg_tracker",
  "alerts": [
   {
@@ -71,18 +71,7 @@
     "안 제15조~제20조의 단계별 산정식이 확정되면 기존 전과정 배출량 산정 결과를 다시 계산한다.",
     "안 제21조, 제22조의 검증·보고 요건을 모니터링·검증 요건 데이터에 반영하고, 필요하면 2026년 10월 29일까지 기후에너지환경부 교통환경과에 의견을 제출한다."
    ],
-   "targets": [
-    {
-     "target": "screener-mrv",
-     "repo": "carbon_screener",
-     "path": "data/mrv/",
-     "symbol": "-",
-     "importance": "medium",
-     "where": "안 제21조, 제22조(검증·보고)",
-     "summary": "전과정평가 산정결과의 검증 절차와 보고방법을 새로 규정한다. 자동차 LCA에 대한 검증·보고 요건을 모니터링·검증 요건 데이터에 반영해야 한다.",
-     "reason": "자동차 전과정평가 결과에 대한 검증·보고 요건이 새로 생겨 MRV 요건 데이터에 추가가 필요하다."
-    }
-   ],
+   "targets": [],
    "note": ""
   },
   {

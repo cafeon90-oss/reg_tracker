@@ -166,7 +166,7 @@ class Analyzer:
                 "변경 위치마다 items 하나씩 만들어라. 형식 변경만 있는 위치는 하나로 합쳐도 된다."
             )
             out = self._ask(prompt, _ITEMS_SCHEMA)
-            items.extend(Item(**it) for it in out["items"])
+            items.extend(_items_within(out["items"], cands))
 
         overview = self._ask(
             f"문서: {title}\n비교: {old_label} → {new_label}\n\n"
@@ -179,21 +179,26 @@ class Analyzer:
 
     # ── 행정예고, EU 법령 ──────────────────────────────
 
-    def analyze_text(self, *, kind: str, title: str, text: str, doc_id: str | None = None) -> Analysis:
-        """본문 하나(행정예고 본문, EU 법령 본문 앞부분)를 요약한다."""
-        cands = candidates(self.targets, doc_id, title + "\n" + text) or self.targets
+    def analyze_text(self, *, kind: str, title: str, text: str, cands: list[Target]) -> Analysis:
+        """본문 하나(행정예고 본문, EU 법령 본문 앞부분)를 요약한다. cands 는 호출하는 쪽이 고른 영향 후보."""
         prompt = (
             f"[{kind}] {title}\n\n[영향 후보]\n{self._targets_block(cands)}\n\n[본문]\n{text}\n\n"
             "핵심 내용을 items로 나눠 적어라(최대 6개). where에는 조항·별표·Annex 등 위치를 쓴다."
         )
         out = self._ask(prompt, _ITEMS_SCHEMA)
-        items = [Item(**it) for it in out["items"]]
+        items = _items_within(out["items"], cands)
         overview = self._ask(
             f"[{kind}] {title}\n\n" + "\n".join(f"- ({i.importance}) {i.where}: {i.summary}" for i in items)
             + "\n\n한 문장 요약과 실무자가 할 일을 적어라.",
             _OVERVIEW_SCHEMA,
         )
         return Analysis(items=items, **overview)
+
+
+def _items_within(raw_items: list[dict], cands: list[Target]) -> list[Item]:
+    """LLM이 후보 목록 밖의 대상을 붙였으면 떼어 낸다. 후보가 없으면 영향 대상도 없다."""
+    allowed = {t.id for t in cands}
+    return [Item(**{**it, "impacts": [x for x in it["impacts"] if x["target"] in allowed]}) for it in raw_items]
 
 
 def _group_block(where: str, cs: list[Change]) -> str:

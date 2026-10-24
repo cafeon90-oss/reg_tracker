@@ -11,7 +11,7 @@ import yaml
 
 from .diff import Change, diff_documents
 from .http import ROOT
-from .impact import load_targets
+from .impact import candidates, load_targets, notice_candidates
 from .llm import Analysis, Analyzer
 from .sources import eu, lawgokr, lawmaking
 from .state import State
@@ -72,15 +72,17 @@ def _rule_entry(rule: dict, state: State, analyzer: Analyzer | None) -> Entry:
                       url=cur.url, status="first",
                       note="직전 버전을 찾지 못해 조문 비교 없이 공식 제·개정문만 요약했다. 다음 개정부터 조문을 비교한다.")
         if analyzer:
-            entry.analysis = analyzer.analyze_text(kind="고시 제·개정문", title=f"{rule['name']} {cur.label}",
-                                                   text=doc.revision_note, doc_id=rule["id"])
+            entry.analysis = analyzer.analyze_text(
+                kind="고시 제·개정문", title=f"{rule['name']} {cur.label}", text=doc.revision_note,
+                cands=candidates(analyzer.targets, rule["id"], doc.revision_note))
     else:
         entry = compare_rule(rule, prev, cur, analyzer)
     state.set_last(rule["id"], cur.seq)
     return entry
 
 
-def _notice_entries(cfg: dict, state: State, analyzer: Analyzer | None) -> list[Entry]:
+def _notice_entries(cfg: dict, rule_names: dict[str, str], state: State,
+                    analyzer: Analyzer | None) -> list[Entry]:
     since = date.today() - timedelta(days=cfg.get("lookback_days", 120))
     found: dict[str, lawmaking.Notice] = {}
     for kw in cfg["keywords"]:
@@ -94,7 +96,9 @@ def _notice_entries(cfg: dict, state: State, analyzer: Analyzer | None) -> list[
                       subtitle=f"{n.agency} · 의견제출 {n.start:%Y.%m.%d}~{n.end:%Y.%m.%d} · {n.status}",
                       url=n.url, status="new")
         if analyzer:
-            entry.analysis = analyzer.analyze_text(kind="행정예고", title=n.title, text=text)
+            entry.analysis = analyzer.analyze_text(
+                kind="행정예고", title=n.title, text=text,
+                cands=notice_candidates(analyzer.targets, n.title, text, rule_names))
         state.mark("notices", n.notice_id)
         out.append(entry)
     return out
@@ -118,8 +122,9 @@ def _eu_entries(act_cfg: dict, state: State, analyzer: Analyzer | None) -> list[
             else:
                 text = act.title
                 entry.note = "법령이 아닌 문서(보고서·공지)라 제목만으로 요약했다."
-            entry.analysis = analyzer.analyze_text(kind="EU 법령", title=act.title, text=text,
-                                                   doc_id=act_cfg["id"])
+            entry.analysis = analyzer.analyze_text(
+                kind="EU 법령", title=act.title, text=text,
+                cands=candidates(analyzer.targets, act_cfg["id"], act.title + "\n" + text))
         state.mark("eu", act.celex)
         out.append(entry)
     return out
@@ -142,7 +147,8 @@ def run(*, use_llm: bool = True, save_state: bool = True) -> tuple[list[Entry], 
     for rule in cfg.get("admin_rules", []):
         guarded(rule["id"], lambda r=rule: _rule_entry(r, state, analyzer))
     if "notices" in cfg:
-        guarded("notices", lambda: _notice_entries(cfg["notices"], state, analyzer))
+        rule_names = {r["id"]: r["name"] for r in cfg.get("admin_rules", [])}
+        guarded("notices", lambda: _notice_entries(cfg["notices"], rule_names, state, analyzer))
     for act in cfg.get("eu_acts", []):
         guarded(act["id"], lambda a=act: _eu_entries(a, state, analyzer))
 
